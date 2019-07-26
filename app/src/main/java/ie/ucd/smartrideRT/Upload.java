@@ -1,4 +1,4 @@
-package com.empatica.sample;
+package ie.ucd.smartrideRT;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 public class Upload {
-    private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAdn7IAKZUPyYJXhaYmllRlCFZwhYgt_m6fNafXq8DcgWK";
+    private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAp28xHJrK_8n7JbxEbxVoSvlaR9_ABuES6K8DvB8Jyb75";
 
     public static void upload(String path, String fileName, String dataLabel) throws DbxException, IOException {
 
