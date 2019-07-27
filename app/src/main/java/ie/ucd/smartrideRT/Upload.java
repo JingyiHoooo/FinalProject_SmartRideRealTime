@@ -21,9 +21,8 @@ import java.util.Date;
 public class Upload {
     private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAp28xHJrK_8n7JbxEbxVoSvlaR9_ABuES6K8DvB8Jyb75";
 
-    private static final String dataLabel = "EBike";
 
-    public static void upload() throws DbxException, IOException {
+    public static void upload(String dataLabel) throws DbxException, IOException {
 
         /**
          * Create Dropbox client
@@ -64,10 +63,10 @@ public class Upload {
          */
 
 
-        //Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartride/databases/data.db");
+        //Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
 
 
-        try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartride/databases/data.db");
+        try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
         ) {
             FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel)
                     .withMode(WriteMode.OVERWRITE)

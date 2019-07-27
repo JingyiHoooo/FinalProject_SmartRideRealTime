@@ -359,8 +359,13 @@ public class DatabaseService extends Service {
                     RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
 
             dbHandler.addBikeDataRow(bikedata);
+            try {
+                Upload.upload("EBike");
 
-            Upload.upload();
+            } catch (Exception e) {
+                System.out.println("Call upload exception");
+            }
+
         }
     }
 
