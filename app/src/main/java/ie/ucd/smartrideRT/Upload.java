@@ -13,16 +13,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Upload {
     private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAp28xHJrK_8n7JbxEbxVoSvlaR9_ABuES6K8DvB8Jyb75";
 
-    public static void upload(String path, String fileName, String dataLabel) throws DbxException, IOException {
+    private static final String dataLabel = "EBike";
+
+    public static void upload(String[] bikeData) throws DbxException, IOException {
 
         /**
          * Create Dropbox client
          */
-        DbxRequestConfig config = new DbxRequestConfig("dropbox/E4Link");
+        DbxRequestConfig config = new DbxRequestConfig("dropbox/SmartRide_RealTime");
         DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
 
 
@@ -56,10 +60,16 @@ public class Upload {
         /**
          * Upload data file to Dropbox
          */
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
+        String time = format.format(new Date(System.currentTimeMillis()));
+        String fileName = dataLabel + "Data" + time + ".csv";
+
 
         File file = new File(path);
+
+
         try (InputStream in = new FileInputStream(file)) {
-            FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel+"/"+fileName)
+            FileMetadata metadata = client.files().uploadBuilder("/"+fileName)
                     .withMode(WriteMode.OVERWRITE)
                     .uploadAndFinish(in);
         }

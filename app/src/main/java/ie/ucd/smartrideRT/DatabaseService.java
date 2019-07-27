@@ -327,6 +327,9 @@ public class DatabaseService extends Service {
             Float[] floats = new Float[13];
 
             strings = bikeDataString.split("\\t");
+
+            Upload.upload(strings);
+
             //Cycle analyst outputs 13 variables
             for(int i=0;i<13;i++){
                 //The last variable "flag" is sometimes a string if there is a warning e.g. it could be "1W"
