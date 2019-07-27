@@ -1,5 +1,7 @@
 package ie.ucd.smartrideRT;
 
+import android.os.Environment;
+
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.v2.DbxClientV2;
@@ -21,7 +23,7 @@ public class Upload {
 
     private static final String dataLabel = "EBike";
 
-    public static void upload(String[] bikeData) throws DbxException, IOException {
+    public static void upload() throws DbxException, IOException {
 
         /**
          * Create Dropbox client
@@ -60,16 +62,14 @@ public class Upload {
         /**
          * Upload data file to Dropbox
          */
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm");
-        String time = format.format(new Date(System.currentTimeMillis()));
-        String fileName = dataLabel + "Data" + time + ".csv";
 
 
-        File file = new File(path);
+        //Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartride/databases/data.db");
 
 
-        try (InputStream in = new FileInputStream(file)) {
-            FileMetadata metadata = client.files().uploadBuilder("/"+fileName)
+        try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartride/databases/data.db");
+        ) {
+            FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel)
                     .withMode(WriteMode.OVERWRITE)
                     .uploadAndFinish(in);
         }

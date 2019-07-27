@@ -328,7 +328,6 @@ public class DatabaseService extends Service {
 
             strings = bikeDataString.split("\\t");
 
-            Upload.upload(strings);
 
             //Cycle analyst outputs 13 variables
             for(int i=0;i<13;i++){
@@ -360,6 +359,8 @@ public class DatabaseService extends Service {
                     RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
 
             dbHandler.addBikeDataRow(bikedata);
+
+            Upload.upload();
         }
     }
 
