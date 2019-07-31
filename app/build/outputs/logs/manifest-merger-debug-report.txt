@@ -153,7 +153,7 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0-alpha02] C:\
 activity#ie.ucd.smartrideRT.MainActivity
 ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:23:9-33:20
 	android:label
-		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:25:13-45
+		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:25:13-46
 	android:name
 		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:24:13-59
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER

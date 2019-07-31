@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -27,16 +30,18 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.L AUNCHER" />
             </intent-filter>
 
         </activity>
         <activity android:name="ie.ucd.smartrideRT.SendCommand" />
 
         <service
-            android:name="ie.ucd.smartrideRT.BluetoothService"
+            android:name="ie.ucd.smartrideRT.BLEService"
             android:enabled="true"
             android:exported="true" />
+
+
 
         <activity android:name="ie.ucd.smartrideRT.ViewData" />
 

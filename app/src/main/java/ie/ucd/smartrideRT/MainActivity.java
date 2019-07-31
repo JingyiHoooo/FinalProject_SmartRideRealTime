@@ -12,6 +12,7 @@
 package ie.ucd.smartrideRT;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -125,7 +126,17 @@ public class MainActivity extends Activity implements OnItemClickListener {
         Log.i(tag, "About to launch SendCommand");
         Intent i = new Intent(this, SendCommand.class);
         startActivity(i);
+
+    /**
+     * 跳转到BLEService 传递一个参数 一个地址 并把名字和地址保存起来
+     */
+    BluetoothDevice mDevice = mAdapter.getDevice(position);
+    toast(mDevice.getAddress());
+    saveDeviceAddress(mDevice.getAddress());
+    startTheService();
+    finish();
     }
+
 
     // Method to launch activity to view data saved in database
     public void goToDb(View view){
