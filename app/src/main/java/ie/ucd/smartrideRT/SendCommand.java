@@ -21,7 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-
+import ie.ucd.smartrideRT.BLEService;
 
 public class SendCommand extends AppCompatActivity {
     BLEService BLEService;
@@ -60,7 +60,7 @@ public class SendCommand extends AppCompatActivity {
         if (message.length() > 0) {
             byte[] send = message.getBytes();
             Log.i(tag, "Bytes are " + send);
-            BLEService.write(send);
+            BLEService.wirteToBLE(send);
         }
     }
 
@@ -69,8 +69,8 @@ public class SendCommand extends AppCompatActivity {
     private ServiceConnection bluetoothServiceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service){
-            BluetoothService.BluetoothMyLocalBinder binder  = (BluetoothService.BluetoothMyLocalBinder) service;
-            BLEService = binder.getService();
+            //BluetoothService.BluetoothMyLocalBinder binder  = (BluetoothService.BluetoothMyLocalBinder) service;
+            BLEService.LocalBinder binder = (BLEService.LocalBinder) service;
             isBound = true;
         }
 
