@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private BLEAdapter mAdapter = null;
 
 
-    private BLEService mBluetoothLeService;
+    private BLEService mBLEService;
     BluetoothService bluetoothService;
     boolean bluetoothIsBound=false;
     ArrayAdapter<String> activityListAdapter;
@@ -99,13 +99,13 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private ServiceConnection BLEServiceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service){
-            mBluetoothLeService = ((BLEService.LocalBinder) service).getService();
+            mBLEService = ((BLEService.LocalBinder) service).getService();
             bluetoothIsBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name){
-            mBluetoothLeService = null;
+            mBLEService = null;
             bluetoothIsBound = false;
         }
 
