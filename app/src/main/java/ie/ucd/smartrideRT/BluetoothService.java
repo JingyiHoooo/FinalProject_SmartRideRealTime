@@ -114,8 +114,7 @@ public class BluetoothService extends Service {
     }
 
     // Turn on Bluetooth if it is not already on
-    private void turnOnBT() {
-        Intent btIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+    private void turnOnBT() {tent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         btIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(btIntent);
     }

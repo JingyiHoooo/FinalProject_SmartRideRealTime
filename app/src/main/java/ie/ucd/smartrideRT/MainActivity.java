@@ -12,12 +12,14 @@
 package ie.ucd.smartrideRT;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,12 +30,26 @@ import android.widget.Toast;
 import android.os.IBinder;
 import android.content.ServiceConnection;
 import android.content.ComponentName;
-
+import java.util.ArrayList;
 import ie.ucd.smartrideRT.BluetoothService.BluetoothMyLocalBinder;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
     private static final String tag = "debugging";
+
+    //private LeDeviceListAdapter mLeDeviceListAdapter;
+    private BluetoothAdapter mBluetoothAdapter;
+    private boolean mScanning;
+    private Handler mHandler;
+
+    private static final int REQUEST_ENABLE_BT = 1;
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
+    private ListView mListView = null;
+    private BLEAdapter mAdapter = null;
+
+
+    private BLEService mBluetoothLeService;
     BluetoothService bluetoothService;
     boolean bluetoothIsBound=false;
     ArrayAdapter<String> activityListAdapter;
@@ -47,8 +63,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
         init();
 
         //start service for bluetooth connection to retrieve bluetooth devices
-        Intent i = new Intent(this, BluetoothService.class);
-        bindService(i, bluetoothServiceConnection, Context.BIND_AUTO_CREATE);
+        Intent i = new Intent(this, BLEService.class);
+        bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
 
         //register broadcast receiver to produce list of all available devices for Bluetooth connection
         registerDeviceReceiver();
@@ -80,16 +96,16 @@ public class MainActivity extends Activity implements OnItemClickListener {
     };
 
     //bluetoothServiceConnection is required for Bluetooth to work in the background
-    private ServiceConnection bluetoothServiceConnection = new ServiceConnection(){
+    private ServiceConnection BLEServiceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service){
-            BluetoothMyLocalBinder binder  = (BluetoothMyLocalBinder) service;
-            bluetoothService = binder.getService();
+            mBluetoothLeService = ((BLEService.LocalBinder) service).getService();
             bluetoothIsBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name){
+            mBluetoothLeService = null;
             bluetoothIsBound = false;
         }
 
@@ -125,19 +141,10 @@ public class MainActivity extends Activity implements OnItemClickListener {
     public void goToSendCommand(View view){
         Log.i(tag, "About to launch SendCommand");
         Intent i = new Intent(this, SendCommand.class);
-        startActivity(i);
-
-    /**
-     * 跳转到BLEService 传递一个参数 一个地址 并把名字和地址保存起来
-     */
-    BluetoothDevice mDevice = mAdapter.getDevice(position);
-    toast(mDevice.getAddress());
-    saveDeviceAddress(mDevice.getAddress());
-    startTheService();
-    finish();
-    }
+        startActivity(i);}
 
 
+/*
     // Method to launch activity to view data saved in database
     public void goToDb(View view){
         Log.i(tag, "Launching database activity");
@@ -177,4 +184,5 @@ public class MainActivity extends Activity implements OnItemClickListener {
         Intent n = new Intent(this, CooperativeCompetitiveControl.class);
         startActivity(n);
     }
+    */
 }

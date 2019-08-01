@@ -24,7 +24,7 @@ import android.widget.EditText;
 
 
 public class SendCommand extends AppCompatActivity {
-    BluetoothService bluetoothService;
+    BLEService BLEService;
     boolean isBound=false;
     private static final String tag = "debugging";
 
@@ -34,7 +34,7 @@ public class SendCommand extends AppCompatActivity {
         setContentView(R.layout.activity_send_command);
 
         //start service for bluetooth connection
-        Intent i = new Intent(this, BluetoothService.class);
+        Intent i = new Intent(this, BLEService.class);
         bindService(i, bluetoothServiceConnection, Context.BIND_AUTO_CREATE);
 
 
@@ -60,7 +60,7 @@ public class SendCommand extends AppCompatActivity {
         if (message.length() > 0) {
             byte[] send = message.getBytes();
             Log.i(tag, "Bytes are " + send);
-            bluetoothService.write(send);
+            BLEService.write(send);
         }
     }
 
@@ -70,7 +70,7 @@ public class SendCommand extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service){
             BluetoothService.BluetoothMyLocalBinder binder  = (BluetoothService.BluetoothMyLocalBinder) service;
-            bluetoothService = binder.getService();
+            BLEService = binder.getService();
             isBound = true;
         }
 

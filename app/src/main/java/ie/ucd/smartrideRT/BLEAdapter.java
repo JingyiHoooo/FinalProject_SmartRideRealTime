@@ -13,6 +13,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
+/**
+  * @date 2015-07-22
+  * @detail 设备列表适配器
+  * @author Leo
+  * 
+  */
 @SuppressLint("InflateParams")
 public class BLEAdapter extends BaseAdapter {
     private ArrayList<BluetoothDevice> mLeDevices;
@@ -20,6 +26,7 @@ public class BLEAdapter extends BaseAdapter {
 
 
     public BLEAdapter(Context context) {
+        super();
         mLeDevices = new ArrayList<BluetoothDevice>();
         mInflater = LayoutInflater.from(context);
     }
@@ -57,13 +64,9 @@ public class BLEAdapter extends BaseAdapter {
 
         if (null == view) {
             viewHolder = new ViewHolder();
-
-
-            view = mInflater.inflate(R.layout.item_ble, null);
+            view = mInflater.inflate(R.layout.listitem_device, null);
             viewHolder.deviceName = (TextView) view
                     .findViewById(R.id.device_name);
-
-
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
@@ -77,7 +80,7 @@ public class BLEAdapter extends BaseAdapter {
         if (deviceName != null && deviceName.length() > 0)
             viewHolder.deviceName.setText(deviceName);
         else
-            viewHolder.deviceName.setText("unknown name");
+            viewHolder.deviceName.setText("Unknown device");
 
 
         return view;
@@ -87,6 +90,7 @@ public class BLEAdapter extends BaseAdapter {
     /**
      * 列表显示控件类
      * 
+     * @author Leo
      * 
      */
     private class ViewHolder {
@@ -139,4 +143,3 @@ public class BLEAdapter extends BaseAdapter {
 
 
 }
-

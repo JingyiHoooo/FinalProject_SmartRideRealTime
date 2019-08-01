@@ -14,7 +14,7 @@
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature
         android:name="android.hardware.bluetooth_le"
-        android:required="false" />
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -30,7 +30,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.L AUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
