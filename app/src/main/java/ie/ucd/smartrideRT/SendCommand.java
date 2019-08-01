@@ -21,7 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import ie.ucd.smartrideRT.BLEService;
+
 
 public class SendCommand extends AppCompatActivity {
     BLEService BLEService;

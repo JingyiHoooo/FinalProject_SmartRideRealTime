@@ -251,7 +251,7 @@ public class BluetoothService extends Service {
         // Perform the write unsynchronized
         r.write(out);
     }
-
+//客户端获取BluetoothSocket， 获取线程
     public class BluetoothBikeConnectThread extends Thread {
         private BluetoothDevice bluetoothDevice;
         private BluetoothSocket bluetoothSocket;
@@ -371,6 +371,7 @@ public class BluetoothService extends Service {
     }
 
     // Once the device is connected by Bluetooth set up methods to enable us to read and write to the socket
+    //数据传输， 蓝牙数据处理线程
     public class SmartRideConnectedThread extends Thread {
         private BufferedReader bufferedReader;
         private final OutputStream mmOutStream;
@@ -422,13 +423,14 @@ public class BluetoothService extends Service {
                     }
                     s = "";
                 } catch (IOException e) {
+                    //回调断开连接
                     bikeIsConnected = false;
                     e.printStackTrace();
                     Log.i(tag, "some kind of exception");
                 }
             }
         }
-
+//发送数据
         public void write(byte[] bytes) {
             String commandSent;
             try {
@@ -445,6 +447,7 @@ public class BluetoothService extends Service {
         }
 
         /* Call this from the main activity to shutdown the connection */
+        //关闭连接
         public void cancel() {
             bikeIsConnected = false;
             try {
