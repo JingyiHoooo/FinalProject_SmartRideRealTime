@@ -114,7 +114,8 @@ public class BluetoothService extends Service {
     }
 
     // Turn on Bluetooth if it is not already on
-    private void turnOnBT() {tent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+    private void turnOnBT() {
+        Intent btIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         btIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(btIntent);
     }
@@ -202,6 +203,7 @@ public class BluetoothService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+            Log.d("debuggg", "onreceive: " + action);
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 //Toast.makeText(getApplicationContext(), "ACTION_FOUND", Toast.LENGTH_SHORT).show();
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);

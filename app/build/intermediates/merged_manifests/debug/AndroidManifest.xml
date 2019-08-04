@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -53,7 +56,7 @@
         <activity android:name="ie.ucd.smartrideRT.SendCommand" />
 
         <service
-            android:name="ie.ucd.smartrideRT.BluetoothService"
+            android:name="ie.ucd.smartrideRT.BLEService"
             android:enabled="true"
             android:exported="true" />
 

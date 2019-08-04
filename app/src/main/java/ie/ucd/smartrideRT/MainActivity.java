@@ -13,13 +13,15 @@ package ie.ucd.smartrideRT;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,11 +29,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.os.IBinder;
-import android.content.ServiceConnection;
-import android.content.ComponentName;
-import java.util.ArrayList;
-import ie.ucd.smartrideRT.BluetoothService.BluetoothMyLocalBinder;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
@@ -42,6 +39,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private boolean mScanning;
     private Handler mHandler;
 
+    private static Context mContext;// 上下文
+
     private static final int REQUEST_ENABLE_BT = 1;
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
@@ -50,7 +49,6 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
 
     private BLEService mBLEService;
-    BluetoothService bluetoothService;
     boolean bluetoothIsBound=false;
     ArrayAdapter<String> activityListAdapter;
     ListView listView;
@@ -62,6 +60,9 @@ public class MainActivity extends Activity implements OnItemClickListener {
         setContentView(R.layout.activity_main);
         init();
 
+        /**
+         * Start service for BLE connection to retrieve BLE devices
+         */
         //start service for bluetooth connection to retrieve bluetooth devices
         Intent i = new Intent(this, BLEService.class);
         bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
@@ -83,6 +84,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private void registerDeviceReceiver() {
         filter = new IntentFilter("ie.ucd.smartrideRT");
         registerReceiver(MyReceiver, filter);
+        filter = new IntentFilter("ie.ucd.smartrideRT.message");
+        registerReceiver(stateReceiver, filter);
     }
 
     //BroadcastReceiver listens for available devices from BluetoothService
@@ -90,8 +93,19 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("debuggg", "bt onreceive");
             String deviceDataReceived = intent.getStringExtra("device");
-            activityListAdapter.add(deviceDataReceived);
+            if (activityListAdapter.getCount() == 0 ||!activityListAdapter.getItem(0).equals(deviceDataReceived))
+                activityListAdapter.add(deviceDataReceived);
+        }
+    };
+    // Toast for indicate state
+    private final BroadcastReceiver stateReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String message = intent.getStringExtra("message");
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -111,6 +125,38 @@ public class MainActivity extends Activity implements OnItemClickListener {
 
     };
 
+    /**
+     *  Handles various events fired by the Service.
+     */
+
+    // ACTION_GATT_CONNECTED: connected to a GATT server.
+    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
+    //                        or notification operations.
+            /*
+    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
+                mConnected = true;
+                updateConnectionState(R.string.connected);
+                invalidateOptionsMenu();
+            } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                mConnected = false;
+                updateConnectionState(R.string.disconnected);
+                invalidateOptionsMenu();
+                clearUI();
+            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                // Show all the supported services and characteristics on the user interface.
+                displayGattServices(mBluetoothLeService.getSupportedGattServices());
+            } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+            }
+        }
+    };
+    */
 //    @Override
 //    public void onDestroy(){
 //        super.onDestroy();
@@ -121,18 +167,19 @@ public class MainActivity extends Activity implements OnItemClickListener {
     //method to manage what happens when user clicks one of the devices that have been found by bluetooth
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                             long arg3) {
-
-        if (activityListAdapter.getItem(arg2).contains("Paired")) {
-            //Log.i(tag, "Checking if device " + activityListAdapter.getItem(arg2) + " is paired.");
-            // Take the address out of the string
-            String deviceAddress = activityListAdapter.getItem(arg2).split("[\\r\\n]")[1];
-            Log.i(tag, "Device address clicked is " + deviceAddress);
-
-            //bluetoothService.connectToPairedDevice(deviceAddress);
-            bluetoothService.checkifPaired(arg2);
-        } else {
-            Toast.makeText(getApplicationContext(), "device is not paired", Toast.LENGTH_SHORT).show();
-        }
+        mBLEService.tryRead();
+//
+//        if (activityListAdapter.getItem(arg2).contains("Paired")) {
+//            //Log.i(tag, "Checking if device " + activityListAdapter.getItem(arg2) + " is paired.");
+//            // Take the address out of the string
+//            String deviceAddress = activityListAdapter.getItem(arg2).split("[\\r\\n]")[1];
+//            Log.i(tag, "Device address clicked is " + deviceAddress);
+//
+//            //bluetoothService.connectToPairedDevice(deviceAddress);
+//            bluetoothService.checkifPaired(arg2);
+//        } else {
+//            Toast.makeText(getApplicationContext(), "device is not paired", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     /* The following methods launch different activities depending on the user selection*/

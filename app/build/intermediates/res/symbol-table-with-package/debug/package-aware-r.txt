@@ -1401,6 +1401,8 @@ id design_menu_item_action_area
 id design_menu_item_action_area_stub
 id design_menu_item_text
 id design_navigation_view
+id device_address
+id device_name
 id dialog_button
 id disableHome
 id displayData
@@ -1689,6 +1691,7 @@ layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout geofencing_activity
+layout listitem_device
 layout mtrl_alert_dialog
 layout mtrl_alert_dialog_actions
 layout mtrl_alert_dialog_title
