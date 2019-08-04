@@ -24,7 +24,7 @@ import android.widget.EditText;
 
 
 public class SendCommand extends AppCompatActivity {
-    BLEService BLEService;
+    private BLEService mBLEService;
     boolean isBound=false;
     private static final String tag = "debugging";
 
@@ -35,7 +35,7 @@ public class SendCommand extends AppCompatActivity {
 
         //start service for bluetooth connection
         Intent i = new Intent(this, BLEService.class);
-        bindService(i, bluetoothServiceConnection, Context.BIND_AUTO_CREATE);
+        bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
 
 
     }
@@ -77,6 +77,7 @@ public class SendCommand extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name){
+            mBLEService = null;
             isBound = false;
         }
 

@@ -1,5 +1,10 @@
 package ie.ucd.smartrideRT;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +30,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+
 import android.widget.Toast;
 
 
@@ -53,9 +59,9 @@ public class BLEService extends Service {
     private List<BluetoothGattCharacteristic> characterList;//特征
 
     MyDBHandler dbHandler;
+    //bufferedReader bufferedReader;
 
-
-    private Handler handler;
+    private Handler scanhandler;
 
     private static final boolean AUTO_CONNECT = true;// 是否自动连接
     private static final boolean NOTIFICATION_ENABLED = true;
@@ -124,7 +130,7 @@ public class BLEService extends Service {
 
     public boolean initialize() {
 
-        handler = new Handler();
+        scanhandler = new Handler();
         Log.d("debuggg", "ble initiallize");
 
         // If the phone support BLE
@@ -152,9 +158,8 @@ public class BLEService extends Service {
         }
 
 
-
         //Stop BLE devices scanning after 10 seconds
-        handler.postDelayed(new Runnable() {
+        scanhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mBluetoothAdapter.stopLeScan(null);
@@ -320,12 +325,12 @@ public class BLEService extends Service {
                     mBluetoothGatt.discoverServices(); //search the services support by the connected devices
                 mConnectionState = STATE_CONNECTED;
                 System.out.println("state connected");
-                toast("Connected");
+                toast("Successfully connected to bike!");
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 // connect(mBluetoothDeviceAddress);
                 mConnectionState = STATE_DISCONNECTED;
                 System.out.println("state disconnected");
-                toast("Disconnected");
+                toast("ailed to connect - please try again.");
             }
 
 
@@ -338,7 +343,7 @@ public class BLEService extends Service {
 
             Log.d(TAG, "onServicesDiscovered");
 
-            toast("Service Discovered");
+            toast("Bike Service Discovered！");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.d("debuggg2", "Gatt success");
 
@@ -455,8 +460,8 @@ public class BLEService extends Service {
      * @param characteristic Characteristic to act on.
      * @param enabled        If true, enable notification.  False otherwise.
      */
-
-    // 设置通知
+    // It's common for BLE apps to ask to be notified when a particular characteristic changes
+    // on the device.
     private void setCharacteristicNotification(BluetoothGattCharacteristic characteristic,
                                                boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
@@ -467,16 +472,27 @@ public class BLEService extends Service {
 
         //Get the features in the specified feature of the device, where it is monitored,
         // setCharacteristicNotification and the above callback onCharacteristicChanged one by one
-
-        // This is specific to Heart Rate Measurement.
+        /*
         if (UUID_BIKEDATA.equals(characteristic.getUuid())) {
             BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                     UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG));
             descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
             mBluetoothGatt.writeDescriptor(descriptor);
-        }
+
+        }*/
     }
 
+
+    /**
+     * toast
+     */
+    private void toast(String text) {
+        //  Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent();
+        intent.setAction("ie.ucd.smartrideRT.message");
+        intent.putExtra("message", text);
+        sendBroadcast(intent);
+    }
 
     /**
      * 获取此实例
@@ -529,6 +545,8 @@ public class BLEService extends Service {
      * @return valueIn
      */
     public byte[] readFromBLE() {
+
+
         byte[] valueIn = null;
 
 
@@ -542,20 +560,45 @@ public class BLEService extends Service {
         if (isSuccess) {
             Log.d("debuggg2", "read success" + " " + isSuccess);
             valueIn = mCharacteristic.getValue();
-        }
 
+        }
 
         return valueIn;
     }
 
-    /**
-     * toast
-     */
-    private void toast(String text) {
-        //  Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent();
-        intent.setAction("ie.ucd.smartrideRT.message");
-        intent.putExtra("message", text);
-        sendBroadcast(intent);
+
+    public void writeToDatabase(){
+        private bufferedReader bufferedReader;
+        Log.i(TAG, "save data to database");
+        String s;
+        bufferedReader = null;
+
+        try{
+            bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(valueIn), "UTF-8"));
+
+        } catch(UnsupportedEncodingException e1){
+            e1.printStackTrace();
+        }
+
+        while(true) {
+            try {
+                if (bufferedReader.ready()) {
+                    s = bufferedReader.readLine();
+                    String databaseEntry =  s;
+                    Intent database_intent = new Intent();
+                    database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+                    database_intent.putExtra("database", databaseEntry);
+                    database_intent.setAction("ie.ucd.smartrideRT.database");
+                    sendBroadcast(database_intent);
+                }
+                s = "";
+            } catch (IOException e) {
+
+                e.printStackTrace();
+                Log.i(TAG, "something wrong");
+            }
+        }
+
     }
+
 }

@@ -167,7 +167,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
     //method to manage what happens when user clicks one of the devices that have been found by bluetooth
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                             long arg3) {
-        mBLEService.tryRead();
+        //mBLEService.tryRead();
 //
 //        if (activityListAdapter.getItem(arg2).contains("Paired")) {
 //            //Log.i(tag, "Checking if device " + activityListAdapter.getItem(arg2) + " is paired.");
