@@ -28,11 +28,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
-    private static final String tag = "debugging";
+    private static final String tag = "MADebugging";
 
     //private LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
@@ -86,6 +87,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
         registerReceiver(MyReceiver, filter);
         filter = new IntentFilter("ie.ucd.smartrideRT.message");
         registerReceiver(stateReceiver, filter);
+        filter = new IntentFilter("ie.ucd.smartrideRT.connection");
+        registerReceiver(connectionReceiver, filter);
     }
 
     //BroadcastReceiver listens for available devices from BluetoothService
@@ -106,6 +109,15 @@ public class MainActivity extends Activity implements OnItemClickListener {
         public void onReceive(Context context, Intent intent) {
             String message = intent.getStringExtra("message");
             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private final BroadcastReceiver connectionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean connected = intent.getBooleanExtra("connected", false);
+            TextView tv = findViewById(R.id.tvConnection);
+            tv.setText(connected ? "c" : "d");
         }
     };
 

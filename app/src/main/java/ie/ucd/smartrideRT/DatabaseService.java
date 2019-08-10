@@ -33,6 +33,8 @@ import com.microsoft.band.sensors.BandCaloriesEventListener;
 import com.microsoft.band.sensors.BandHeartRateEvent;
 import com.microsoft.band.sensors.BandHeartRateEventListener;
 
+import java.util.Calendar;
+
 public class DatabaseService extends Service {
 
     private final IBinder databaseBinder = new DatabaseMyLocalBinder();
@@ -311,6 +313,8 @@ public class DatabaseService extends Service {
         }
     };
 
+    int minute = -1;
+
     //Save data from the cycle analyst in a separate thread
     private class ProcessBikeDataThread extends Thread{
         private final String bikeDataString;
@@ -321,6 +325,18 @@ public class DatabaseService extends Service {
         }
 
         public void run(){
+
+            Calendar c =  Calendar.getInstance();
+            int currentMinute = c.get(Calendar.MINUTE);
+            if (currentMinute != minute) {
+                try {
+                    Upload.upload("EBike");
+
+                } catch (Exception e) {
+                    System.out.println("Call upload exception");
+                }
+                minute = currentMinute;
+            }
 
             String[] strings;
             String tempFlag="";
@@ -359,15 +375,11 @@ public class DatabaseService extends Service {
                     RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
 
             dbHandler.addBikeDataRow(bikedata);
-            try {
-                Upload.upload("EBike");
-
-            } catch (Exception e) {
-                System.out.println("Call upload exception");
-            }
 
         }
     }
+
+
 
     private class ProcessTrafficLightDataThread extends Thread {
         private final String trafficLightData;

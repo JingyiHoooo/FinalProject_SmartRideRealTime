@@ -14,6 +14,7 @@ package ie.ucd.smartrideRT;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,8 @@ import android.widget.EditText;
 public class SendCommand extends AppCompatActivity {
     private BLEService mBLEService;
     boolean isBound=false;
-    private static final String tag = "debugging";
+    private static final String tag = "SendCommandDebugging";
+    IntentFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +37,7 @@ public class SendCommand extends AppCompatActivity {
 
         //start service for bluetooth connection
         Intent i = new Intent(this, BLEService.class);
-        bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
-
+//        bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -60,7 +61,7 @@ public class SendCommand extends AppCompatActivity {
         if (message.length() > 0) {
             byte[] send = message.getBytes();
             Log.i(tag, "Bytes are " + send);
-            BLEService.wirteToBLE(send);
+//            BLEService.wirteToBLE(send);
         }
     }
 

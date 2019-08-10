@@ -158,7 +158,7 @@ public final class R {
         public static final int text2 = 0x7f080129;
         public static final int time = 0x7f080136;
         public static final int title = 0x7f080139;
-        public static final int wide = 0x7f08014e;
+        public static final int wide = 0x7f08014f;
     }
     public static final class integer {
         private integer() {}

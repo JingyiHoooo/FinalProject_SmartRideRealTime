@@ -33,6 +33,7 @@ import android.util.Log;
 
 import android.widget.Toast;
 
+import com.google.android.gms.common.util.ArrayUtils;
 
 
 /**
@@ -86,6 +87,8 @@ public class BLEService extends Service {
     // TODO insert your own UUID numbers
     public static final UUID Service_UUID = UUID.fromString("00003eb0-0000-1000-8000-00805f9b34fb");
     public static final UUID Characteristic_UUID = UUID.fromString("00003eb2-0000-1000-8000-00805f9b34fb");
+
+    private boolean found = false;
 
 
     @Override
@@ -162,7 +165,12 @@ public class BLEService extends Service {
         scanhandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mBluetoothAdapter.stopLeScan(null);
+                mBluetoothAdapter.stopLeScan(new BluetoothAdapter.LeScanCallback() {
+                    @Override
+                    public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+
+                    }
+                });
             }
         }, 10000);
 
@@ -170,14 +178,15 @@ public class BLEService extends Service {
         mBluetoothAdapter.startLeScan(new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-                Log.d("debuggg", bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
-                if ("Empatica E4".equals(bluetoothDevice.getName())) {//only search the given name devices
+//                Log.d("debuggg", bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
+                if ("EBIKE".equals(bluetoothDevice.getName()) && !found) {//only search the given name devices
                     Intent intent = new Intent();
                     intent.setAction("ie.ucd.smartrideRT");
                     intent.putExtra("device", bluetoothDevice.getAddress());
                     sendBroadcast(intent);
                     connect(bluetoothDevice.getAddress());
                     mBluetoothAdapter.stopLeScan(null);
+                    found = true;
                 }
             }
         });
@@ -326,20 +335,43 @@ public class BLEService extends Service {
                 mConnectionState = STATE_CONNECTED;
                 System.out.println("state connected");
                 toast("Successfully connected to bike!");
+                connectionBroadcast(true);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 // connect(mBluetoothDeviceAddress);
                 mConnectionState = STATE_DISCONNECTED;
                 System.out.println("state disconnected");
                 toast("ailed to connect - please try again.");
+                connectionBroadcast(true);
             }
-
-
         }
 
+        public UUID convertFromInteger(int i) {
+            final long MSB = 0x0000000000001000L;
+            final long LSB = 0x800000805f9b34fbL;
+            long value = i & 0xFFFFFFFF;
+            return new UUID(MSB | (value << 32), LSB);
+        }
         // Call this method when the BLE Services have been found
         // triggered by mBluetoothGatt.discoverServices()
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d(TAG, "onServicesDiscovered");
+
+            BluetoothGattService service = gatt.getService(convertFromInteger(0x180D));
+
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(convertFromInteger(0x2A37));
+
+            gatt.setCharacteristicNotification(characteristic, true);
+
+            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(convertFromInteger(0x2902));
+
+            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+
+            gatt.writeDescriptor(descriptor);
+
+
+
+            if  (true) return;
 
             Log.d(TAG, "onServicesDiscovered");
 
@@ -391,10 +423,28 @@ public class BLEService extends Service {
         }
 
         @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            Log.d("debuggg2", descriptor + " " + status);
+        }
+
+        List<byte []> btyeArrays = new ArrayList<>();
+        int count = 0;
+        @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            System.out.println("我收到的：" + new String(characteristic.getValue()));
+            btyeArrays.add(characteristic.getValue());
+            if (btyeArrays.size() == 4) {
+                byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
+
+                Log.d("debuggg2", new String(fullPacket).substring(0, 63));
+//                for (byte[] ba: btyeArrays) {
+//                    Log.d("debuggg2", count + "//// " + new String(ba));
+//                }
+                btyeArrays.clear();
+                count++;
+            }
+
         }
 
         // Callback of read Data
@@ -494,6 +544,13 @@ public class BLEService extends Service {
         sendBroadcast(intent);
     }
 
+    private void connectionBroadcast(boolean connected) {
+        Intent intent = new Intent();
+        intent.setAction("ie.ucd.smartrideRT.connection");
+        intent.putExtra("connected", connected);
+        sendBroadcast(intent);
+    }
+
     /**
      * 获取此实例
      * 
@@ -566,39 +623,39 @@ public class BLEService extends Service {
         return valueIn;
     }
 
-
-    public void writeToDatabase(){
-        private bufferedReader bufferedReader;
-        Log.i(TAG, "save data to database");
-        String s;
-        bufferedReader = null;
-
-        try{
-            bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(valueIn), "UTF-8"));
-
-        } catch(UnsupportedEncodingException e1){
-            e1.printStackTrace();
-        }
-
-        while(true) {
-            try {
-                if (bufferedReader.ready()) {
-                    s = bufferedReader.readLine();
-                    String databaseEntry =  s;
-                    Intent database_intent = new Intent();
-                    database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-                    database_intent.putExtra("database", databaseEntry);
-                    database_intent.setAction("ie.ucd.smartrideRT.database");
-                    sendBroadcast(database_intent);
-                }
-                s = "";
-            } catch (IOException e) {
-
-                e.printStackTrace();
-                Log.i(TAG, "something wrong");
-            }
-        }
-
-    }
+//
+//    public void writeToDatabase(){
+//        private bufferedReader bufferedReader;
+//        Log.i(TAG, "save data to database");
+//        String s;
+//        bufferedReader = null;
+//
+//        try{
+//            bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(valueIn), "UTF-8"));
+//
+//        } catch(UnsupportedEncodingException e1){
+//            e1.printStackTrace();
+//        }
+//
+//        while(true) {
+//            try {
+//                if (bufferedReader.ready()) {
+//                    s = bufferedReader.readLine();
+//                    String databaseEntry =  s;
+//                    Intent database_intent = new Intent();
+//                    database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+//                    database_intent.putExtra("database", databaseEntry);
+//                    database_intent.setAction("ie.ucd.smartrideRT.database");
+//                    sendBroadcast(database_intent);
+//                }
+//                s = "";
+//            } catch (IOException e) {
+//
+//                e.printStackTrace();
+//                Log.i(TAG, "something wrong");
+//            }
+//        }
+//
+//    }
 
 }
