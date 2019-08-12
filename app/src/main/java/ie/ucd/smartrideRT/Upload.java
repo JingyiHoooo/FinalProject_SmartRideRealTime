@@ -62,10 +62,6 @@ public class Upload {
          * Upload data file to Dropbox
          */
 
-
-        //Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
-
-
         try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
         ) {
             FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel)

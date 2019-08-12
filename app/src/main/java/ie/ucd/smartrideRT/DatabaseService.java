@@ -314,7 +314,6 @@ public class DatabaseService extends Service {
     };
 
     int minute = -1;
-
     //Save data from the cycle analyst in a separate thread
     private class ProcessBikeDataThread extends Thread{
         private final String bikeDataString;

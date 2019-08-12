@@ -4,6 +4,7 @@ ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:2:1-83:12
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:2:1-83:12
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:2:1-83:12
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:2:1-83:12
+MERGED from [androidx.multidex:multidex:2.0.0] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\735b55af79b8e9d0d8e8cabebf73a941\AndroidManifest.xml:17:1-22:12
 MERGED from [:pathsense-android-sdk-location-bundle-release-4.0.0.0:] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\3d5b38eb266da436d26d343dd49653f7\AndroidManifest.xml:2:1-50:12
 MERGED from [com.google.android.material:material:1.1.0-alpha05] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\8298d56854ff8a3fb59777dea3178c78\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat:1.1.0-alpha04] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\22572f51375287ea15c5a92938d73035\AndroidManifest.xml:17:1-22:12
@@ -252,6 +253,8 @@ uses-sdk
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml
 INJECTED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml
+MERGED from [androidx.multidex:multidex:2.0.0] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\735b55af79b8e9d0d8e8cabebf73a941\AndroidManifest.xml:20:5-43
+MERGED from [androidx.multidex:multidex:2.0.0] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\735b55af79b8e9d0d8e8cabebf73a941\AndroidManifest.xml:20:5-43
 MERGED from [:pathsense-android-sdk-location-bundle-release-4.0.0.0:] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\3d5b38eb266da436d26d343dd49653f7\AndroidManifest.xml:7:5-9:41
 MERGED from [:pathsense-android-sdk-location-bundle-release-4.0.0.0:] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\3d5b38eb266da436d26d343dd49653f7\AndroidManifest.xml:7:5-9:41
 MERGED from [com.google.android.material:material:1.1.0-alpha05] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\8298d56854ff8a3fb59777dea3178c78\AndroidManifest.xml:20:5-44

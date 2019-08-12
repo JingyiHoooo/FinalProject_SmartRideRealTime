@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -437,10 +438,14 @@ public class BLEService extends Service {
             if (btyeArrays.size() == 4) {
                 byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
 
+                writeToDatabase(fullPacket);
+
                 Log.d("debuggg2", new String(fullPacket).substring(0, 63));
 //                for (byte[] ba: btyeArrays) {
 //                    Log.d("debuggg2", count + "//// " + new String(ba));
 //                }
+
+
                 btyeArrays.clear();
                 count++;
             }
@@ -624,38 +629,29 @@ public class BLEService extends Service {
     }
 
 //
-//    public void writeToDatabase(){
-//        private bufferedReader bufferedReader;
-//        Log.i(TAG, "save data to database");
-//        String s;
-//        bufferedReader = null;
-//
-//        try{
-//            bufferedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(valueIn), "UTF-8"));
-//
-//        } catch(UnsupportedEncodingException e1){
-//            e1.printStackTrace();
-//        }
-//
-//        while(true) {
-//            try {
-//                if (bufferedReader.ready()) {
-//                    s = bufferedReader.readLine();
-//                    String databaseEntry =  s;
-//                    Intent database_intent = new Intent();
-//                    database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-//                    database_intent.putExtra("database", databaseEntry);
-//                    database_intent.setAction("ie.ucd.smartrideRT.database");
-//                    sendBroadcast(database_intent);
-//                }
-//                s = "";
-//            } catch (IOException e) {
-//
-//                e.printStackTrace();
-//                Log.i(TAG, "something wrong");
-//            }
-//        }
-//
-//    }
+     public void writeToDatabase(byte[] data) {
+         Log.i(TAG, "save data to database");
+         String s;
+
+         s = new String(data, StandardCharsets.UTF_8);
+         //s = new String(data);
+         String databaseEntry = s;
+         Log.i(TAG, databaseEntry);
+         Intent database_intent = new Intent();
+         database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+         database_intent.putExtra("database", databaseEntry);
+         database_intent.setAction("ie.ucd.smartrideRT.database");
+         sendBroadcast(database_intent);
+         Log.i(TAG, "success sendBroadsast");
+         s = "";
+             /*
+         } catch (Exception e) {
+
+             e.printStackTrace();
+             Log.i(TAG, "some kind of exception");
+         }*/
+    }
+
+
 
 }
