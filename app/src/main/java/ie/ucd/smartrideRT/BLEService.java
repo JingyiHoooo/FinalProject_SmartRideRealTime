@@ -639,10 +639,10 @@ public class BLEService extends Service {
          Log.i(TAG, databaseEntry);
          Intent database_intent = new Intent();
          database_intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-         database_intent.putExtra("database", databaseEntry);
          database_intent.setAction("ie.ucd.smartrideRT.database");
+         database_intent.putExtra("database", databaseEntry);
          sendBroadcast(database_intent);
-         Log.i(TAG, "success sendBroadsast");
+         Log.i(TAG, "success sendBroadcast");
          s = "";
              /*
          } catch (Exception e) {

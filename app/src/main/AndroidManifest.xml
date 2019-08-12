@@ -37,16 +37,16 @@
         <activity android:name="ie.ucd.smartrideRT.SendCommand" />
 
         <service
-            android:name="ie.ucd.smartrideRT.BLEService"
+            android:name=".BLEService"
             android:enabled="true"
             android:exported="true" />
 
 
 
-        <activity android:name="ie.ucd.smartrideRT.ViewData" />
+        <activity android:name=".ViewData" />
 
         <service
-            android:name="ie.ucd.smartrideRT.DatabaseService"
+            android:name=".DatabaseService"
             android:enabled="true"
             android:exported="true">
 

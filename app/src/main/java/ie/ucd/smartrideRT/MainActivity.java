@@ -11,17 +11,23 @@
 
 package ie.ucd.smartrideRT;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,6 +36,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
@@ -43,6 +56,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private static Context mContext;// 上下文
 
     private static final int REQUEST_ENABLE_BT = 1;
+
+    private static final int REQUEST_PERMISSION = 1;
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
     private ListView mListView = null;
@@ -59,6 +74,13 @@ public class MainActivity extends Activity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /**
+         * Permissions
+         */
+        if (checkAndRequestPermissions()) {
+            // carry on the normal flow, as the case of  permissions  granted.
+        }
+
         init();
 
         /**
@@ -71,7 +93,72 @@ public class MainActivity extends Activity implements OnItemClickListener {
         //register broadcast receiver to produce list of all available devices for Bluetooth connection
         registerDeviceReceiver();
     }
+    /**
+     * Permissions Request
+     */
 
+    String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE
+    };
+
+    private boolean checkAndRequestPermissions() {
+        int result;
+        List<String> mPermissionList = new ArrayList<>();
+        for (String p : permissions) {
+            result = ContextCompat.checkSelfPermission(this, p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                mPermissionList.add(p);
+            }
+        }
+        if (!mPermissionList.isEmpty()) {
+            ActivityCompat.requestPermissions(this, mPermissionList.toArray(new String[mPermissionList.size()]), REQUEST_PERMISSION);
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissionsList[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            //STORAGE
+            case REQUEST_PERMISSION:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted, yay!
+                } else {
+                    // Permission denied, boo!
+                    final boolean needRationale1 = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                    new AlertDialog.Builder(this)
+                            .setTitle("Permission required")
+                            .setMessage("Without this permission application cannot be started, allow it in order to start the sppllication.")
+                            .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // try again
+                                    if (needRationale1) {
+                                        // the "never ask again" flash is not set, try again with permission request
+                                    } else {
+                                        // the "never ask again" flag is set so the permission requests is disabled, try open app settings to enable the permission
+                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                        intent.setData(uri);
+                                        startActivity(intent);
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Exit application", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // without permission exit is the only way
+                                    finish();
+                                }
+                            })
+                            .show();
+                }
+                break;
+        }
+    }
     //init initialises variables especially the Adapter to store all devices found by Bluetooth
     private void init() {
         listView = (ListView) findViewById(R.id.listView);

@@ -184,11 +184,11 @@ ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:39:9-42:3
 	android:exported
 		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:42:13-36
 	android:name
-		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:40:13-57
+		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:40:13-39
 activity#ie.ucd.smartrideRT.ViewData
-ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:46:9-64
+ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:46:9-46
 	android:name
-		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:46:19-61
+		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:46:19-43
 service#ie.ucd.smartrideRT.DatabaseService
 ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:48:9-53:19
 	android:enabled
@@ -196,7 +196,7 @@ ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:48:9-53:1
 	android:exported
 		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:51:13-36
 	android:name
-		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:49:13-62
+		ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:49:13-44
 meta-data#com.google.android.gms.version
 ADDED from C:\FINAL_PROJECT\SmartRide\app\src\main\AndroidManifest.xml:55:9-57:69
 MERGED from [com.google.android.gms:play-services-basement:15.0.1] C:\Users\temp2015\.gradle\caches\transforms-2\files-2.1\a7254fdabf61833d21e6314284f84eec\AndroidManifest.xml:23:9-25:69
