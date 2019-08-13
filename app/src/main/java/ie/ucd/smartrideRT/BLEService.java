@@ -633,8 +633,8 @@ public class BLEService extends Service {
          Log.i(TAG, "save data to database");
          String s;
 
-         s = new String(data, StandardCharsets.UTF_8);
-         //s = new String(data);
+         //s = new String(data, StandardCharsets.UTF_8);
+         s = new String(data).substring(0, 63);
          String databaseEntry = s;
          Log.i(TAG, databaseEntry);
          Intent database_intent = new Intent();
@@ -643,7 +643,6 @@ public class BLEService extends Service {
          database_intent.putExtra("database", databaseEntry);
          sendBroadcast(database_intent);
          Log.i(TAG, "success sendBroadcast");
-         s = "";
              /*
          } catch (Exception e) {
 

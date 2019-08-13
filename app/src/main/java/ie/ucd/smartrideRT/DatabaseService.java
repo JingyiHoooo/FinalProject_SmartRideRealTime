@@ -45,6 +45,7 @@ public class DatabaseService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(tag,"Call reg db");
         registerDatabaseReceiver();
         dbHandler = new MyDBHandler(this, null, null, 1);
 
@@ -76,6 +77,7 @@ public class DatabaseService extends Service {
     }
 
     private void registerDatabaseReceiver() {
+        Log.d(tag, "db reg");
         filter = new IntentFilter("ie.ucd.smartrideRT.database");
         registerReceiver(MyReceiver, filter);
     }
@@ -84,6 +86,7 @@ public class DatabaseService extends Service {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(tag, "db onreceive");
             String bikeDataReceived = intent.getStringExtra("database");
 
             //comment this log line for now but it is very useful for checking data is being received
@@ -104,6 +107,75 @@ public class DatabaseService extends Service {
             }
         }
     };
+
+
+    int minute = -1;
+    //Save data from the cycle analyst in a separate thread
+    private class ProcessBikeDataThread extends Thread{
+        private final String bikeDataString;
+
+        public ProcessBikeDataThread(String string){
+            this.bikeDataString = string;
+            // this.count = count;
+        }
+
+        public void run(){
+
+            Calendar c =  Calendar.getInstance();
+            int currentMinute = c.get(Calendar.MINUTE);
+            if (minute == -1)
+                minute = currentMinute;
+            if (currentMinute != minute) {
+                try {
+                    Upload.upload("EBike");
+                    Log.d(tag,"Success Call Upload");
+
+                } catch (Exception e) {
+                    System.out.println("Call upload exception");
+                }
+                minute = currentMinute;
+            }
+
+            String[] strings;
+            String tempFlag="";
+            Float[] floats = new Float[13];
+
+            strings = bikeDataString.split("\\t");
+
+
+            //Cycle analyst outputs 13 variables
+            for(int i=0;i<13;i++){
+                //The last variable "flag" is sometimes a string if there is a warning e.g. it could be "1W"
+                //as such must be processed as a string, see cycle analyst guide
+                if(i==12){
+                    tempFlag = strings[i];
+                }
+                else{
+                    floats[i] = Float.valueOf(strings[i]);
+                }
+            }
+
+            float batteryEnergy = floats[0];
+            float voltage = floats[1];
+            float current = floats[2];
+            float speed = floats[3];
+            float distance = floats[4];
+            float temperature = floats[5];
+            float RPM = floats[6];
+            float humanPower = floats[7];
+            float torque = floats[8];
+            float throttleIn = floats[9];
+            float throttleOut = floats[10];
+            float acceleration = floats[11];
+            String flag = tempFlag;
+
+            BikeData bikedata = new BikeData(batteryEnergy, voltage, current, speed, distance,temperature,
+                    RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
+
+            dbHandler.addBikeDataRow(bikedata);
+
+        }
+    }
 
     //Make checks and if all is OK register listener to listen for data from Microsoft Band
     private class HeartRateSubscriptionTask extends AsyncTask<Void, Void, Void> {
@@ -293,6 +365,7 @@ public class DatabaseService extends Service {
                     caloriesToday = bandCaloriesEvent.getCaloriesToday();
                 }catch (InvalidBandVersionException e) {
                     e.printStackTrace();
+
                 }
 
 
@@ -312,72 +385,6 @@ public class DatabaseService extends Service {
 
         }
     };
-
-    int minute = -1;
-    //Save data from the cycle analyst in a separate thread
-    private class ProcessBikeDataThread extends Thread{
-        private final String bikeDataString;
-
-        public ProcessBikeDataThread(String string){
-            this.bikeDataString = string;
-           // this.count = count;
-        }
-
-        public void run(){
-
-            Calendar c =  Calendar.getInstance();
-            int currentMinute = c.get(Calendar.MINUTE);
-            if (currentMinute != minute) {
-                try {
-                    Upload.upload("EBike");
-
-                } catch (Exception e) {
-                    System.out.println("Call upload exception");
-                }
-                minute = currentMinute;
-            }
-
-            String[] strings;
-            String tempFlag="";
-            Float[] floats = new Float[13];
-
-            strings = bikeDataString.split("\\t");
-
-
-            //Cycle analyst outputs 13 variables
-            for(int i=0;i<13;i++){
-                //The last variable "flag" is sometimes a string if there is a warning e.g. it could be "1W"
-                //as such must be processed as a string, see cycle analyst guide
-                if(i==12){
-                    tempFlag = strings[i];
-                }
-                else{
-                    floats[i] = Float.valueOf(strings[i]);
-                }
-            }
-
-            float batteryEnergy = floats[0];
-            float voltage = floats[1];
-            float current = floats[2];
-            float speed = floats[3];
-            float distance = floats[4];
-            float temperature = floats[5];
-            float RPM = floats[6];
-            float humanPower = floats[7];
-            float torque = floats[8];
-            float throttleIn = floats[9];
-            float throttleOut = floats[10];
-            float acceleration = floats[11];
-            String flag = tempFlag;
-
-            BikeData bikedata = new BikeData(batteryEnergy, voltage, current, speed, distance,temperature,
-                    RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
-
-            dbHandler.addBikeDataRow(bikedata);
-
-        }
-    }
-
 
 
     private class ProcessTrafficLightDataThread extends Thread {

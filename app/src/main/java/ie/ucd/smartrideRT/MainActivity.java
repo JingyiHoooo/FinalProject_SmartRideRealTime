@@ -64,7 +64,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
     private BLEAdapter mAdapter = null;
 
 
-    private BLEService mBLEService;
+    BLEService mBLEService;
+    DatabaseService mdatabaseService;
     boolean bluetoothIsBound=false;
     ArrayAdapter<String> activityListAdapter;
     ListView listView;
@@ -74,6 +75,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         /**
          * Permissions
          */
@@ -90,33 +93,36 @@ public class MainActivity extends Activity implements OnItemClickListener {
         Intent i = new Intent(this, BLEService.class);
         bindService(i, BLEServiceConnection, Context.BIND_AUTO_CREATE);
 
+        //start thread to start syncing data from bike
+        Intent j = new Intent(this, DatabaseService.class);
+        bindService(j, databaseServiceConnection, Context.BIND_AUTO_CREATE);
         //register broadcast receiver to produce list of all available devices for Bluetooth connection
         registerDeviceReceiver();
     }
-    /**
-     * Permissions Request
-     */
+        /**
+         * Permissions Request
+         */
 
-    String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE
-    };
+        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.READ_PHONE_STATE
+        };
 
-    private boolean checkAndRequestPermissions() {
-        int result;
-        List<String> mPermissionList = new ArrayList<>();
-        for (String p : permissions) {
-            result = ContextCompat.checkSelfPermission(this, p);
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                mPermissionList.add(p);
+        private boolean checkAndRequestPermissions() {
+            int result;
+            List<String> mPermissionList = new ArrayList<>();
+            for (String p : permissions) {
+                result = ContextCompat.checkSelfPermission(this, p);
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    mPermissionList.add(p);
+                }
             }
-        }
-        if (!mPermissionList.isEmpty()) {
-            ActivityCompat.requestPermissions(this, mPermissionList.toArray(new String[mPermissionList.size()]), REQUEST_PERMISSION);
-            return false;
-        }
-        return true;
+            if (!mPermissionList.isEmpty()) {
+                ActivityCompat.requestPermissions(this, mPermissionList.toArray(new String[mPermissionList.size()]), REQUEST_PERMISSION);
+                return false;
+            }
+            return true;
     }
 
 
@@ -222,6 +228,20 @@ public class MainActivity extends Activity implements OnItemClickListener {
             bluetoothIsBound = false;
         }
 
+    };
+
+    //databaseServiceConnection is needed to use DatabaseService methods
+    private ServiceConnection databaseServiceConnection = new ServiceConnection(){
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service){
+            DatabaseService.DatabaseMyLocalBinder binder  = (DatabaseService.DatabaseMyLocalBinder) service;
+            mdatabaseService = binder.getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name){
+
+        }
     };
 
 

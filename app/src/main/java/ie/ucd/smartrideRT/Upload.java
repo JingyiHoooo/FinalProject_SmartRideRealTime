@@ -64,7 +64,7 @@ public class Upload {
 
         try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
         ) {
-            FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel)
+            FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel+".db")
                     .withMode(WriteMode.OVERWRITE)
                     .uploadAndFinish(in);
         }
