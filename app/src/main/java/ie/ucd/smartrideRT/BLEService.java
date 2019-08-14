@@ -431,13 +431,13 @@ public class BLEService extends Service {
 
         List<byte []> btyeArrays = new ArrayList<>();
         int count = 0;
-        int minute = -1;
+        //int minute = -1;
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-
+/*
             Calendar c =  Calendar.getInstance();
 
             int currentMinute = c.get(Calendar.MINUTE);
@@ -453,16 +453,18 @@ public class BLEService extends Service {
                 }
                 minute = currentMinute;
             }
-            btyeArrays.add(characteristic.getValue());
-            if (btyeArrays.size() == 4) {
-                byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
+            */
+                btyeArrays.add(characteristic.getValue());
+                if (btyeArrays.size() == 4) {
+                    byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
 
-                writeToDatabase(fullPacket);
+                    writeToDatabase(fullPacket);
 
-                Log.d("debuggg2", new String(fullPacket).substring(0, 63));
-                btyeArrays.clear();
-                count++;
-            }
+                    Log.d("debuggg2", new String(fullPacket).substring(0, 63));
+                    btyeArrays.clear();
+                    count++;
+                }
+
 
         }
 

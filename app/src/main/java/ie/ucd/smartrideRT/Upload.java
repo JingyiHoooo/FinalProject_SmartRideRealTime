@@ -1,6 +1,7 @@
 package ie.ucd.smartrideRT;
 
 import android.os.Environment;
+import android.util.Log;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
@@ -64,6 +65,7 @@ public class Upload {
 
         try (InputStream in = new FileInputStream(Environment.getDataDirectory().getPath()+"/data/ie.ucd.smartrideRT/databases/data.db");
         ) {
+            Log.d("UP","ADD");
             FileMetadata metadata = client.files().uploadBuilder("/"+dataLabel+".db")
                     .withMode(WriteMode.OVERWRITE)
                     .uploadAndFinish(in);

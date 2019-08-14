@@ -80,6 +80,7 @@ public class DatabaseService extends Service {
         Log.d(tag, "db reg");
         filter = new IntentFilter("ie.ucd.smartrideRT.database");
         registerReceiver(MyReceiver, filter);
+
     }
 
     private final BroadcastReceiver MyReceiver = new BroadcastReceiver() {
@@ -109,13 +110,12 @@ public class DatabaseService extends Service {
     };
 
 
-
+    int minute = -1;
     //Save data from the cycle analyst in a separate thread
     private class ProcessBikeDataThread extends Thread{
         private final String bikeDataString;
 
         private final Object o = new Object();
-        int minute = -1;
 
         public ProcessBikeDataThread(String string){
             this.bikeDataString = string;
@@ -123,7 +123,7 @@ public class DatabaseService extends Service {
         }
 
         public void run(){
-            /*
+/*
             Calendar c =  Calendar.getInstance();
 
             int currentMinute = c.get(Calendar.MINUTE);
@@ -139,7 +139,8 @@ public class DatabaseService extends Service {
                 }
                 minute = currentMinute;
             }
-            */
+*/
+
             String[] strings;
             String tempFlag="";
             Float[] floats = new Float[13];
