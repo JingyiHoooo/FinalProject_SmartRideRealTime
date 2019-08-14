@@ -109,10 +109,13 @@ public class DatabaseService extends Service {
     };
 
 
-    int minute = -1;
+
     //Save data from the cycle analyst in a separate thread
     private class ProcessBikeDataThread extends Thread{
         private final String bikeDataString;
+
+        private final Object o = new Object();
+        int minute = -1;
 
         public ProcessBikeDataThread(String string){
             this.bikeDataString = string;
@@ -120,22 +123,23 @@ public class DatabaseService extends Service {
         }
 
         public void run(){
-
+            /*
             Calendar c =  Calendar.getInstance();
+
             int currentMinute = c.get(Calendar.MINUTE);
             if (minute == -1)
                 minute = currentMinute;
             if (currentMinute != minute) {
                 try {
                     Upload.upload("EBike");
-                    Log.d(tag,"Success Call Upload");
+                    Log.d(tag,"Success Call Upload here");
 
                 } catch (Exception e) {
                     System.out.println("Call upload exception");
                 }
                 minute = currentMinute;
             }
-
+            */
             String[] strings;
             String tempFlag="";
             Float[] floats = new Float[13];
@@ -151,7 +155,12 @@ public class DatabaseService extends Service {
                     tempFlag = strings[i];
                 }
                 else{
-                    floats[i] = Float.valueOf(strings[i]);
+                    try{
+                        floats[i] = Float.valueOf(strings[i]);
+                    } catch (NumberFormatException e){
+                        e.printStackTrace();
+                    }
+
                 }
             }
 
@@ -172,7 +181,9 @@ public class DatabaseService extends Service {
             BikeData bikedata = new BikeData(batteryEnergy, voltage, current, speed, distance,temperature,
                     RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
 
-            dbHandler.addBikeDataRow(bikedata);
+            synchronized (o) {
+                dbHandler.addBikeDataRow(bikedata);
+            }
 
         }
     }

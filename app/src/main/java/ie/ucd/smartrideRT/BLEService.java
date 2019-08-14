@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ import com.google.android.gms.common.util.ArrayUtils;
 
 public class BLEService extends Service {
     private static byte[] testData = {1, 2, 3};
-
+    private static final String tag = "debuggBLE";
 
     private Context mContext;// 上下文
     private static final String TAG = BLEService.class.getSimpleName();// TAG
@@ -430,10 +431,28 @@ public class BLEService extends Service {
 
         List<byte []> btyeArrays = new ArrayList<>();
         int count = 0;
+        int minute = -1;
+
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+
+            Calendar c =  Calendar.getInstance();
+
+            int currentMinute = c.get(Calendar.MINUTE);
+            if (minute == -1)
+                minute = currentMinute;
+            if (currentMinute != minute) {
+                try {
+                    Upload.upload("EBike");
+                    Log.d(tag, "Success Call Upload here");
+
+                } catch (Exception e) {
+                    System.out.println("Call upload exception");
+                }
+                minute = currentMinute;
+            }
             btyeArrays.add(characteristic.getValue());
             if (btyeArrays.size() == 4) {
                 byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
@@ -441,11 +460,6 @@ public class BLEService extends Service {
                 writeToDatabase(fullPacket);
 
                 Log.d("debuggg2", new String(fullPacket).substring(0, 63));
-//                for (byte[] ba: btyeArrays) {
-//                    Log.d("debuggg2", count + "//// " + new String(ba));
-//                }
-
-
                 btyeArrays.clear();
                 count++;
             }
@@ -571,7 +585,7 @@ public class BLEService extends Service {
 
 
     /**
-     * 通信接口 通过此函数即可向BLE设备写入数据
+     * Communication API, call this method for writing data to BLE device
      *  
      *
      * @param valueOut
