@@ -82,7 +82,7 @@ public class DatabaseService extends Service {
         registerReceiver(MyReceiver, filter);
 
     }
-
+    int minute = -1;
     private final BroadcastReceiver MyReceiver = new BroadcastReceiver() {
 
         @Override
@@ -96,21 +96,45 @@ public class DatabaseService extends Service {
             // Must determine which table the data is intended for
             String[] splitBikeDataReceived = bikeDataReceived.split(" ");
 
-            if(splitBikeDataReceived[0].equals("Signal")){
+            Calendar c = Calendar.getInstance();
+
+            int currentMinute = c.get(Calendar.MINUTE);
+            if (minute == -1)
+                minute = currentMinute;
+            if (currentMinute != minute) {
+                minute = currentMinute;
+                UploadBikeDataThread uploadBikeDaraThread = new UploadBikeDataThread();
+                uploadBikeDaraThread.start();
+                }
+
+            else{
+                if(splitBikeDataReceived[0].equals("Signal")){
                 ProcessTrafficLightDataThread processTrafficLightDataThread = new ProcessTrafficLightDataThread(bikeDataReceived);
                 processTrafficLightDataThread.start();
-            }
-            else {
-                //If it is desired to save the frequency with which data is saved from cycle analyst this can be
-                //implemented here with a count variable as is done in mHeartRateEventListener below
-                ProcessBikeDataThread processBikeDataThread = new ProcessBikeDataThread(bikeDataReceived);
-                processBikeDataThread.start();
-            }
+                }
+                else {
+                        //If it is desired to save the frequency with which data is saved from cycle analyst this can be
+                        //implemented here with a count variable as is done in mHeartRateEventListener below
+                        ProcessBikeDataThread processBikeDataThread = new ProcessBikeDataThread(bikeDataReceived);
+                        processBikeDataThread.start();
+                    }
+                }
         }
     };
 
 
-    int minute = -1;
+    private class UploadBikeDataThread extends Thread{
+        public void run(){
+            try {
+                Upload.upload("EBike");
+                Log.d(tag,"Success Call Upload here"+ minute);
+            } catch (Exception e) {
+                System.out.println("Call upload exception");
+                return;
+            }
+        }
+    }
+
     //Save data from the cycle analyst in a separate thread
     private class ProcessBikeDataThread extends Thread{
         private final String bikeDataString;
@@ -133,6 +157,7 @@ public class DatabaseService extends Service {
                 try {
                     Upload.upload("EBike");
                     Log.d(tag,"Success Call Upload here");
+                    return;
 
                 } catch (Exception e) {
                     System.out.println("Call upload exception");
@@ -160,6 +185,7 @@ public class DatabaseService extends Service {
                         floats[i] = Float.valueOf(strings[i]);
                     } catch (NumberFormatException e){
                         e.printStackTrace();
+                        return;
                     }
 
                 }
@@ -182,10 +208,12 @@ public class DatabaseService extends Service {
             BikeData bikedata = new BikeData(batteryEnergy, voltage, current, speed, distance,temperature,
                     RPM, humanPower, torque, throttleIn, throttleOut, acceleration, flag);
 
+            /*
             synchronized (o) {
                 dbHandler.addBikeDataRow(bikedata);
             }
-
+*/
+            dbHandler.addBikeDataRow(bikedata);
         }
     }
 

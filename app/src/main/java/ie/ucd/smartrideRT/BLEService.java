@@ -466,6 +466,7 @@ public class BLEService extends Service {
                 }
 
 
+
         }
 
         // Callback of read Data

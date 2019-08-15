@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Upload {
-    private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAp28xHJrK_8n7JbxEbxVoSvlaR9_ABuES6K8DvB8Jyb75";
+    private static final String ACCESS_TOKEN = "lY_d3DAmzgAAAAAAAAAAs2SoAOwHmVVqP5ozJcw4sDBPvIdzSSwISAjUuy1eDLt4";
 
 
     public static void upload(String dataLabel) throws DbxException, IOException {
@@ -28,8 +28,9 @@ public class Upload {
         /**
          * Create Dropbox client
          */
-        DbxRequestConfig config = new DbxRequestConfig("dropbox/SmartRide_RealTime");
+        DbxRequestConfig config = new DbxRequestConfig("dropbox/SmartRideRT");
         DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+        Log.d("DBX","client");
 
 
         /**
@@ -39,7 +40,9 @@ public class Upload {
         /*
         FullAccount account = client.users().getCurrentAccount();
         System.out.println(account.getName().getDisplayName());
+        Log.d("DBX","name");
         */
+
 
         /**
          * Get files and folder metadata from Dropbox root directory

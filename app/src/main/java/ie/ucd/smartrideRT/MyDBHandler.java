@@ -335,6 +335,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+
+
     public void addTrafficLightDataRow(TrafficLightData trafficLightData) {
         ContentValues trafficLightDataValues = new ContentValues();
         trafficLightDataValues.put(COLUMN_TIME, getDateTime());
