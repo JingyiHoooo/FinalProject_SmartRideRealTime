@@ -361,6 +361,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_BIKE_LOCATION, null, bikeLocationDataValues);
 
+        //You should not close the DB since it will be used again in the next call.
+        //(BLE only tested bike data method)
         db.close();
     }
 
