@@ -363,7 +363,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         //You should not close the DB since it will be used again in the next call.
         //(BLE only tested bike data method)
-        db.close();
+         db.close();
     }
 
     //Add a new row to the database
