@@ -147,25 +147,6 @@ public class DatabaseService extends Service {
         }
 
         public void run(){
-/*
-            Calendar c =  Calendar.getInstance();
-
-            int currentMinute = c.get(Calendar.MINUTE);
-            if (minute == -1)
-                minute = currentMinute;
-            if (currentMinute != minute) {
-                try {
-                    Upload.upload("EBike");
-                    Log.d(tag,"Success Call Upload here");
-                    return;
-
-                } catch (Exception e) {
-                    System.out.println("Call upload exception");
-                }
-                minute = currentMinute;
-            }
-*/
-
             String[] strings;
             String tempFlag="";
             Float[] floats = new Float[13];
@@ -178,7 +159,11 @@ public class DatabaseService extends Service {
                 //The last variable "flag" is sometimes a string if there is a warning e.g. it could be "1W"
                 //as such must be processed as a string, see cycle analyst guide
                 if(i==12){
-                    tempFlag = strings[i];
+                    try{
+                        tempFlag = strings[i];
+                    } catch (ArrayIndexOutOfBoundsException e){
+                        tempFlag = "1M";
+                    }
                 }
                 else{
                     try{
@@ -213,7 +198,13 @@ public class DatabaseService extends Service {
                 dbHandler.addBikeDataRow(bikedata);
             }
 */
+            try{
             dbHandler.addBikeDataRow(bikedata);
+            Log.d(tag,"ROWWWWWW");
+            } catch(Exception e){
+                Log.d(tag,"SQLiteConnectionPool Error");
+                return;
+            }
         }
     }
 

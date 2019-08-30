@@ -181,7 +181,7 @@ public class BLEService extends Service {
             @Override
             public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
 //                Log.d("debuggg", bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
-                if ("EBIKE".equals(bluetoothDevice.getName()) && !found) {//only search the given name devices
+                if ("EBIKE".equals(bluetoothDevice.getName()) && !found) {
                     Intent intent = new Intent();
                     intent.setAction("ie.ucd.smartrideRT");
                     intent.putExtra("device", bluetoothDevice.getAddress());
@@ -342,8 +342,8 @@ public class BLEService extends Service {
                 // connect(mBluetoothDeviceAddress);
                 mConnectionState = STATE_DISCONNECTED;
                 System.out.println("state disconnected");
-                toast("ailed to connect - please try again.");
-                connectionBroadcast(true);
+                toast("failed to connect - please try again.");
+                connectionBroadcast(false);
             }
         }
 
@@ -431,32 +431,14 @@ public class BLEService extends Service {
 
         List<byte []> btyeArrays = new ArrayList<>();
         int count = 0;
-        //int minute = -1;
-
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             //broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-/*
-            Calendar c =  Calendar.getInstance();
 
-            int currentMinute = c.get(Calendar.MINUTE);
-            if (minute == -1)
-                minute = currentMinute;
-            if (currentMinute != minute) {
-                try {
-                    Upload.upload("EBike");
-                    Log.d(tag, "Success Call Upload here");
-
-                } catch (Exception e) {
-                    System.out.println("Call upload exception");
-                }
-                minute = currentMinute;
-            }
-            */
                 btyeArrays.add(characteristic.getValue());
-                if (btyeArrays.size() == 4) {
-                    byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3));
+                if (btyeArrays.size() == 5) {
+                    byte[] fullPacket = ArrayUtils.concatByteArrays(btyeArrays.get(0), btyeArrays.get(1), btyeArrays.get(2), btyeArrays.get(3),btyeArrays.get(4));
 
                     writeToDatabase(fullPacket);
 
@@ -544,14 +526,7 @@ public class BLEService extends Service {
 
         //Get the features in the specified feature of the device, where it is monitored,
         // setCharacteristicNotification and the above callback onCharacteristicChanged one by one
-        /*
-        if (UUID_BIKEDATA.equals(characteristic.getUuid())) {
-            BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-                    UUID.fromString(CLIENT_CHARACTERISTIC_CONFIG));
-            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            mBluetoothGatt.writeDescriptor(descriptor);
 
-        }*/
     }
 
 
@@ -650,8 +625,8 @@ public class BLEService extends Service {
          Log.i(TAG, "save data to database");
          String s;
 
-         //s = new String(data, StandardCharsets.UTF_8);
-         s = new String(data).substring(0, 63);
+         s = new String(data, StandardCharsets.UTF_8);
+         //s = s.substring(0, 63);
          String databaseEntry = s;
          Log.i(TAG, databaseEntry);
          Intent database_intent = new Intent();
