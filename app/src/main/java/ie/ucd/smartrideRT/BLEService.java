@@ -47,33 +47,33 @@ public class BLEService extends Service {
     private static byte[] testData = {1, 2, 3};
     private static final String tag = "debuggBLE";
 
-    private Context mContext;// 上下文
+    private Context mContext;
     private static final String TAG = BLEService.class.getSimpleName();// TAG
 
 
-    private BluetoothManager mBluetoothManager = null;// 蓝牙管理器
-    private BluetoothAdapter mBluetoothAdapter = null;// 本地设备
-    private String mBluetoothDeviceAddress = null;// 远程设备地址
-    private BluetoothGatt mBluetoothGatt = null;// GATT通信
-    private BluetoothGattCharacteristic mCharacteristic = null;// 可读写可通知的
+    private BluetoothManager mBluetoothManager = null;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private String mBluetoothDeviceAddress = null;
+    private BluetoothGatt mBluetoothGatt = null;
+    private BluetoothGattCharacteristic mCharacteristic = null;
 
     private ArrayList<BluetoothDevice> listDevice;
-    private List<BluetoothGattService> serviceList;//服务
-    private List<BluetoothGattCharacteristic> characterList;//特征
+    private List<BluetoothGattService> serviceList;
+    private List<BluetoothGattCharacteristic> characterList;
 
     MyDBHandler dbHandler;
     //bufferedReader bufferedReader;
 
     private Handler scanhandler;
 
-    private static final boolean AUTO_CONNECT = true;// 是否自动连接
+    private static final boolean AUTO_CONNECT = true;
     private static final boolean NOTIFICATION_ENABLED = true;
 
 
-    private int mConnectionState = STATE_DISCONNECTED;// 连接状态
-    private static final int STATE_DISCONNECTED = 0;// 断开连接
-    private static final int STATE_CONNECTING = 1;// 连接中
-    private static final int STATE_CONNECTED = 2;// 已连接
+    private int mConnectionState = STATE_DISCONNECTED;
+    private static final int STATE_DISCONNECTED = 0;
+    private static final int STATE_CONNECTING = 1;
+    private static final int STATE_CONNECTED = 2;
 
     public final static String ACTION_GATT_CONNECTED =
             "com.example.bluetooth.le.ACTION_GATT_CONNECTED";
@@ -138,7 +138,7 @@ public class BLEService extends Service {
         scanhandler = new Handler();
         Log.d("debuggg", "ble initiallize");
 
-        // If the phone support BLE
+        // If the phone supp ort BLE
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             toast("BLE not support this device");
             ((Activity) mContext).finish(); // If not, turn off the app
