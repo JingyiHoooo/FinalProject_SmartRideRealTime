@@ -9,6 +9,11 @@
 * into their own service and transferred directly to the MyDBHandler
 * */
 
+/*
+* This class (line 89 - 214) has been modified by Jingyi Hu - jingyi.hu@ucdconnect.ie in 2019.
+* An Upload thread has been added for supporting upload the database file onto the Dropbox
+* Excaption might occurs if the CA3 settings changed
+*/
 package ie.ucd.smartrideRT;
 
 import android.app.Service;
@@ -82,6 +87,7 @@ public class DatabaseService extends Service {
         registerReceiver(MyReceiver, filter);
 
     }
+    
     int minute = -1;
     private final BroadcastReceiver MyReceiver = new BroadcastReceiver() {
 
