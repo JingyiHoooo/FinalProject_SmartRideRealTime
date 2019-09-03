@@ -13,12 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
-/**
-  * @date 2015-07-22
-  * @detail 设备列表适配器
-  * @author Leo
-  * 
-  */
+
 @SuppressLint("InflateParams")
 public class BLEAdapter extends BaseAdapter {
     private ArrayList<BluetoothDevice> mLeDevices;
@@ -86,46 +81,28 @@ public class BLEAdapter extends BaseAdapter {
         return view;
     }
 
-
-    /**
-     * 列表显示控件类
-     * 
-     * @author Leo
-     * 
-     */
     private class ViewHolder {
         public TextView deviceName;
     }
 
-
-    /**
-     * 设置数据源
-     * 
-     * @param mDevices
-     */
     public void setData(ArrayList<BluetoothDevice> mDevices) {
         this.mLeDevices = mDevices;
     }
 
 
-    /**
-     * 添加设备
-     * 
-     * @param mDevice
-     */
+/*
+* Add Devices
+*/
+ 
     public void addDevice(BluetoothDevice mDevice) {
         if (!mLeDevices.contains(mDevice)) {
             mLeDevices.add(mDevice);
         }
     }
 
-
-    /**
-     * 得到设备
-     * 
-     * @param position
-     * @return
-     */
+/*
+* List Devices
+*/
     public BluetoothDevice getDevice(int position) {
         if (mLeDevices.size() <= position) {
             return null;
@@ -135,7 +112,7 @@ public class BLEAdapter extends BaseAdapter {
 
 
     /**
-     * 清空设备
+     * Clear Devices
      */
     public void clear() {
         mLeDevices.clear();
