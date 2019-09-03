@@ -138,7 +138,7 @@ public class BLEService extends Service {
         scanhandler = new Handler();
         Log.d("debuggg", "ble initiallize");
 
-        // If the phone supp ort BLE
+        // If the phone support BLE
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             toast("BLE not support this device");
             ((Activity) mContext).finish(); // If not, turn off the app
@@ -323,7 +323,7 @@ public class BLEService extends Service {
      */
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
-    // @SuppressLint("NewApi")
+
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
 
         // Call this method when the connection state changed
@@ -419,7 +419,7 @@ public class BLEService extends Service {
 //                    wirteToBLE(testData);
 //                    System.out.println(new String(readFromBLE()));
                 }
-            } else { // not services been found
+            } else { // no services been found
                 Log.w(TAG, "onServicesDiscovered received:" + "status");
             }
         }
@@ -475,7 +475,7 @@ public class BLEService extends Service {
             super.onCharacteristicWrite(gatt, characteristic, status);
         }
 
-
+        //following code can be modified for your own requirement
         /*
         @Override
         public void onDescriptorRead(BluetoothGatt gatt,
@@ -532,6 +532,7 @@ public class BLEService extends Service {
 
     /**
      * toast
+     * @param text text will be shown on UI Screen
      */
     private void toast(String text) {
         //  Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
@@ -548,8 +549,7 @@ public class BLEService extends Service {
         sendBroadcast(intent);
     }
 
-    /**
-     * 获取此实例
+    /*
      * 
      * @return
      */
@@ -620,7 +620,11 @@ public class BLEService extends Service {
         return valueIn;
     }
 
-//
+    /**
+     * Database service API, send a broadcast to database service for storing the received data
+     *
+     * @return data
+     */
      public void writeToDatabase(byte[] data) {
          Log.i(TAG, "save data to database");
          String s;
@@ -642,7 +646,5 @@ public class BLEService extends Service {
              Log.i(TAG, "some kind of exception");
          }*/
     }
-
-
 
 }
